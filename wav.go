@@ -27,7 +27,11 @@ func FlacToWav(flacStream io.Reader, writer io.WriteSeeker) (totalBytes int, tot
 		return 0, 0, 0, fmt.Errorf("unsupported BitsPerSample: %d", info.BitsPerSample)
 	}
 
-	buf := make([]byte, 0, int(info.BlockSizeMax)*int(info.NChannels)*int(info.BitsPerSample)/8)
+	bufSize := int(info.BlockSizeMax) * int(info.NChannels) * int(info.BitsPerSample) / 8
+	if bufSize > 8192*16*4 {
+		return 0, 0, 0, fmt.Errorf("buffer size too large: %d bytes", bufSize)
+	}
+	buf := make([]byte, 0, bufSize)
 	for {
 		frame, err := stream.ParseNext()
 		if err != nil {

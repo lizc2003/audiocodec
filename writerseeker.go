@@ -48,10 +48,14 @@ func (ws *WriterSeeker) Seek(offset int64, whence int) (int64, error) {
 		newPos = ws.pos + offs
 	case io.SeekEnd:
 		newPos = ws.buf.Len() + offs
+	default:
+		return 0, errors.New("invalid whence value")
 	}
+
 	if newPos < 0 {
 		return 0, errors.New("negative result pos")
 	}
+
 	ws.pos = newPos
 	return int64(newPos), nil
 }
