@@ -52,7 +52,14 @@ func flacToWavMemory() {
 		return
 	}
 	bytes := writer.Bytes()
-	md5sum := md5.Sum(bytes[audiocodec.WavHeaderSize:])
+
+	md5sum := md5.Sum(bytes)
+	if hex.EncodeToString(md5sum[:]) != "24d62c157971605e42defb9954d65e33" {
+		fmt.Println("md5sum check wrong")
+		return
+	}
+
+	md5sum = md5.Sum(bytes[audiocodec.WavHeaderSize:])
 	if hex.EncodeToString(md5sum[:]) != "372fd5b0a07a0a78b92311ccdca4cc81" {
 		fmt.Println("md5sum check wrong")
 		return
