@@ -83,9 +83,8 @@ func FlacToWav(flacStream io.Reader, writer io.WriteSeeker) (totalBytes int, tot
 		return 0, 0, 0, errors.New("no audio frames decoded")
 	}
 
-	// Update WAV header if seeker
+	// Update WAV header
 	if _, err := writer.Seek(0, io.SeekStart); err != nil {
-		// Can't seek, maybe log warning? return error?
 		// If we can't seek, the file will have invalid header.
 		return 0, 0, 0, fmt.Errorf("seek to start failed: %w", err)
 	}
@@ -95,7 +94,8 @@ func FlacToWav(flacStream io.Reader, writer io.WriteSeeker) (totalBytes int, tot
 		return 0, 0, 0, fmt.Errorf("write real header failed: %w", err)
 	}
 
-	// Seek back to end? Not strictly necessary but good practice.
+	// Not strictly necessary but good practice.
 	writer.Seek(0, io.SeekEnd)
+
 	return totalBytes + WavHeaderSize, totalSamples, int(info.SampleRate), nil
 }

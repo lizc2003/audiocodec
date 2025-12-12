@@ -33,9 +33,15 @@ func TestFlac2Wav(t *testing.T) {
 		}
 
 		bytes := writer.Bytes()
-		md5sum := md5.Sum(bytes[audiocodec.WavHeaderSize:])
+
+		md5sum := md5.Sum(bytes)
+		if hex.EncodeToString(md5sum[:]) != "24d62c157971605e42defb9954d65e33" {
+			t.Error("wav md5sum check wrong")
+		}
+
+		md5sum = md5.Sum(bytes[audiocodec.WavHeaderSize:])
 		if hex.EncodeToString(md5sum[:]) != "372fd5b0a07a0a78b92311ccdca4cc81" {
-			t.Error("md5sum check wrong")
+			t.Error("pcm md5sum check wrong")
 		}
 	})
 }
