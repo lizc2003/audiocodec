@@ -36,9 +36,7 @@ func FlacToWav(flacStream io.Reader, writer io.WriteSeeker) (totalBytes int, tot
 			return 0, 0, 0, err
 		}
 
-		bytesPerSample := int(frame.BitsPerSample) / 8
 		blockSize := int(frame.BlockSize)
-
 		for _, sub := range frame.Subframes {
 			if len(sub.Samples) < blockSize {
 				return 0, 0, 0, fmt.Errorf("subframe contains only %d samples, expected %d", sub.NSamples, frame.BlockSize)
@@ -47,15 +45,15 @@ func FlacToWav(flacStream io.Reader, writer io.WriteSeeker) (totalBytes int, tot
 
 		for i := 0; i < blockSize; i++ {
 			for _, sub := range frame.Subframes {
-				switch bytesPerSample {
-				case 1:
+				switch frame.BitsPerSample {
+				case 8:
 					buf = append(buf, byte(sub.Samples[i]))
-				case 2:
+				case 16:
 					n := int16(sub.Samples[i])
 					buf = append(buf, byte(n), byte(n>>8))
-				case 3:
+				case 24:
 					buf = append(buf, Int32toInt24LEBytes(sub.Samples[i])...)
-				case 4:
+				case 32:
 					n := sub.Samples[i]
 					buf = append(buf, byte(n), byte(n>>8), byte(n>>16), byte(n>>24))
 				default:
