@@ -49,6 +49,8 @@ func GenerateWavHeader(pcmSize int, sampleRate int, numChannels int, bitsPerSamp
 	return header
 }
 
+// The caller can use the following statement to avoid reading trailing metadata as audio.
+// wavStream = io.LimitReader(wavStream, int64(pcmSize))
 func ParseWavHeader(wavStream io.Reader) (pcmSize int, sampleRate int, numChannels int, bitsPerSample int, err error) {
 	var (
 		riffHeader    [12]byte
